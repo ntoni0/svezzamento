@@ -13,17 +13,17 @@
 /* Layout: app da telefono a schede — intestazione breve, una sezione alla volta, barra di menu fissa in basso */
 :root{
   --bg:#f5f7f2; --surface:#ffffff; --fg:#1f2a24; --muted:#5f6d64; --line:#dde3da;
-  --accent:#2f6b55; --accent-soft:#e3eee8; --new:#c4621d; --new-soft:#fbe9dc;
+  --accent:#2f6b55; --accent-soft:#e3eee8; --new:#c4621d; --new-soft:#fbe9dc; --grain:#d9a441; --veg:#5b9a6e;
   --display:"Bricolage Grotesque", ui-rounded, system-ui, sans-serif;
   --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
   --navh:64px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#141a17; --surface:#1c2420; --fg:#e8eee9; --muted:#9aa89f; --line:#2c3630;
-  --accent:#7cc2a3; --accent-soft:#22332b; --new:#f0a26b; --new-soft:#3a2a1e; color-scheme:dark}}
+  --accent:#7cc2a3; --accent-soft:#22332b; --new:#f0a26b; --new-soft:#3a2a1e; --grain:#e0b65e; --veg:#7cc2a3; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#141a17; --surface:#1c2420; --fg:#e8eee9; --muted:#9aa89f; --line:#2c3630;
-  --accent:#7cc2a3; --accent-soft:#22332b; --new:#f0a26b; --new-soft:#3a2a1e; color-scheme:dark}
+  --accent:#7cc2a3; --accent-soft:#22332b; --new:#f0a26b; --new-soft:#3a2a1e; --grain:#e0b65e; --veg:#7cc2a3; color-scheme:dark}
 
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);}
@@ -40,7 +40,7 @@ a{color:var(--accent)}
 /* menu in basso */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);
   padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
-.tabbar ul{list-style:none;margin:0 auto;padding:0;max-width:560px;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.tabbar ul{list-style:none;margin:0 auto;padding:0;max-width:560px;display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
 .tab{width:100%;appearance:none;border:0;background:none;color:var(--muted);font:600 .74rem var(--body);
   display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;border-radius:12px;cursor:pointer;min-height:52px}
 .tab svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -90,6 +90,26 @@ a{color:var(--accent)}
 .shop input:checked + div{opacity:.45;text-decoration:line-through}
 .reset{align-self:flex-start;background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:6px 14px;font:500 .85rem var(--body);cursor:pointer}
 
+.plate{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center}
+.plate-dish{width:120px;max-width:100%;aspect-ratio:1;border-radius:50%;background:conic-gradient(var(--grain) 0 50%,var(--new) 50% 75%,var(--veg) 75% 100%);box-shadow:0 0 0 8px var(--accent-soft)}
+.legend{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;min-width:0}
+.legend li{display:grid;grid-template-columns:12px 1fr;gap:4px 10px;align-items:baseline}
+.legend i{width:12px;height:12px;border-radius:3px;display:block;transform:translateY(1px)}
+.legend b{font-weight:600}.legend span{grid-column:2;color:var(--muted);font-size:.86rem}
+@media (max-width:380px){.plate{grid-template-columns:1fr;justify-items:center}.legend{width:100%}}
+.qty{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:.92rem}
+.qty td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.qty tr:last-child td{border-bottom:0}.qty td:first-child{font-weight:600;width:42%}
+.tips{display:flex;flex-direction:column;gap:10px}
+.tip{background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.tip summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;justify-content:space-between;gap:12px;font-weight:600}
+.tip summary::-webkit-details-marker{display:none}
+.tip summary::after{content:"+";color:var(--accent);font-family:var(--display);font-size:1.2rem;line-height:1}
+.tip[open] summary::after{content:"–"}
+.tip .tb{padding:0 16px 14px;color:var(--muted);font-size:.93rem;display:flex;flex-direction:column;gap:8px}
+.tip .tb p{margin:0}.tip .tb ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.tip .tb strong{color:var(--fg);font-weight:600}
+.warn{border-left:3px solid var(--new);padding-left:10px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .ask{display:flex;flex-direction:column;gap:8px}
 .ask textarea{width:100%;font:16px/1.4 var(--body);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;resize:vertical}
@@ -142,6 +162,28 @@ footer{color:var(--muted);font-size:.82rem}
     </ul>
     <div class="eyebrow">Mai</div>
     <div class="never"><span>sale</span><span>zucchero</span><span>miele</span><span>latte vaccino da bere</span><span>uova, carne o pesce crudi</span><span>fritti</span><span>alcol</span><span>formaggi a latte crudo o con muffa</span></div>
+    <div class="panel-head" style="margin-top:8px"><h2>Come comporre il piatto</h2><p class="sub">Il piatto dei piccoli è diverso da quello degli adulti: più carboidrati, poche proteine.</p></div>
+    <div class="plate">
+      <div class="plate-dish" role="img" aria-label="Piatto diviso: metà carboidrati, un quarto proteine, un quarto verdura"></div>
+      <ul class="legend">
+        <li><i style="background:var(--grain)"></i><b>½ carboidrati</b><span>pastina, cous cous, miglio, quinoa, patate</span></li>
+        <li><i style="background:var(--new)"></i><b>¼ proteine</b><span>carne, pesce, uovo, legumi, formaggio</span></li>
+        <li><i style="background:var(--veg)"></i><b>¼ verdura o frutta</b><span>la crema di base</span></li>
+      </ul>
+    </div>
+    <ul class="rules">
+      <li><b>Più grassi buoni</b><span>Olio EVO a ogni pasto. Servono allo sviluppo del cervello e alla crescita.</span></li>
+      <li><b>Proteine senza esagerare</b><span>Troppe affaticano i reni e fanno crescere di peso troppo in fretta. Meglio variare le fonti nella settimana.</span></li>
+      <li><b>Fibre con calma</b><span>Troppa verdura sazia senza dare energia e ostacola l'assorbimento di ferro e calcio.</span></li>
+    </ul>
+    <div class="eyebrow">Quantità indicate nel piano</div>
+    <table class="qty">
+      <tr><td>Ricotta e formaggi freschi</td><td>circa 2 cucchiai</td></tr>
+      <tr><td>Parmigiano e stagionati</td><td>circa 2 cucchiaini, grattugiati</td></tr>
+      <tr><td>Olio EVO</td><td>un filo a ogni pasto</td></tr>
+      <tr><td>Altri alimenti</td><td>grammature da chiedere alla nutrizionista</td></tr>
+    </table>
+    <p class="sub">Le quantità sono un riferimento, non un obiettivo. Conta che il piatto sia proporzionato, non che lo finisca.</p>
     <div class="panel-head" style="margin-top:8px"><h2>Preparare in anticipo</h2></div>
     <ul class="rules">
       <li><b>Domenica, 60–90 minuti</b><span>Brodo vegetale, verdure a vapore, legumi pronti. Col Bimby: verdura a pezzi e acqua nel boccale, poi frulla; proteine nel Varoma.</span></li>
@@ -154,6 +196,23 @@ footer{color:var(--muted);font-size:.82rem}
     <div class="panel-head"><h2>Lista della spesa</h2><p class="sub">Le spunte restano salvate su questo telefono.</p></div>
     <ul class="shop" id="shop"></ul>
     <button class="reset" id="reset" type="button">Azzera la lista</button>
+  </section>
+
+  <!-- CONSIGLI -->
+  <section class="panel" id="consigli" role="tabpanel" aria-labelledby="t-consigli" hidden>
+    <div class="panel-head"><h2>Consigli</h2><p class="sub">Dal piano della nutrizionista. Tocca un tema per aprirlo.</p></div>
+    <div class="tips">
+      <details class="tip" open><summary>Gag reflex: è normale</summary><div class="tb"><p>Se spinge indietro il cibo con la lingua o fa qualche colpetto di tosse senza agitarsi, è il riflesso che lo protegge. Sta imparando a gestire consistenze nuove.</p><p class="warn"><strong>Diverso dal soffocamento:</strong> se non tossisce, non emette suoni o cambia colore, intervieni subito.</p></div></details>
+<details class="tip"><summary>Fame e sazietà</summary><div class="tb"><ul><li><strong>Ha fame:</strong> si protende verso il cibo, apre la bocca, cerca di prendere il cucchiaino.</li><li><strong>Ha finito:</strong> gira la testa, chiude la bocca, lascia cadere il cucchiaino, perde interesse.</li></ul><p>Un solo gesto non basta: guardali insieme. Se vuole fermarsi, il pasto finisce lì.</p></div></details>
+<details class="tip"><summary>Se rifiuta o gioca col cibo</summary><div class="tb"><p>Toccare, schiacciare e annusare sono già un passo avanti. Riproponi lo stesso alimento in altri giorni, senza insistere.</p><p>Niente lodi solo quando mangia tanto e niente delusione quando mangia poco: se il rifiuto attira molte attenzioni, tende a ripeterlo.</p></div></details>
+<details class="tip"><summary>Un giorno tanto, il giorno dopo poco</summary><div class="tb"><p>È normale. Non compensare al pasto successivo e non pesare gli avanzi. Conta come va nell'arco delle settimane, insieme alla crescita.</p></div></details>
+<details class="tip"><summary>Stitichezza</summary><div class="tb"><ul><li>Acqua sempre disponibile.</li><li>Meno riso, più avena, miglio e quinoa.</li><li>Pera e prugna, anche ogni giorno. Zucchine, zucca e carote ben cotte.</li><li>Olio EVO a ogni pasto e movimento libero.</li></ul><p>Non aumentare troppo la verdura: può peggiorare. Se c'è dolore forte o sangue, senti il pediatra.</p></div></details>
+<details class="tip"><summary>Dentini</summary><div class="tb"><p>Consistenze più morbide e tiepide: creme, ricotta, frutta schiacciata. Aiutano i ghiaccioli fatti in casa con frutta frullata, senza zucchero.</p><p>È normale che mangi meno per qualche giorno: il latte copre il resto.</p></div></details>
+<details class="tip"><summary>Legumi in scatola</summary><div class="tb"><p>Vanno benissimo quando non c'è tempo. Sciacquali bene per togliere il sale e passali al passaverdura per eliminare la buccia.</p></div></details>
+<details class="tip"><summary>Congelare e scongelare</summary><div class="tb"><ul><li>Fai raffreddare, poi porziona in stampini o contenitori chiusi.</li><li>Frigo fino a 3 giorni, freezer fino a 4 mesi.</li><li>Scongela in frigo la notte prima, oppure in microonde a cicli di 30 secondi mescolando.</li><li>Mai ricongelare o conservare quello che è già passato dal suo cucchiaino.</li></ul></div></details>
+<details class="tip"><summary>Spezie ed erbe</summary><div class="tb"><p>Aiutano a non usare sale e abituano a sapori diversi. Sempre in polvere fine: curcuma, cannella, zenzero, cumino, paprica dolce, noce moscata, basilico, timo, maggiorana, origano.</p></div></details>
+<details class="tip"><summary>Al pasto</summary><div class="tb"><ul><li>Ambiente tranquillo, niente schermi né giochi a tavola.</li><li>Seggiolone stabile: schiena sostenuta e piedi appoggiati.</li><li>Mangiate insieme: imita quello che fate voi.</li><li>Meglio un pasto breve e sereno che uno lungo e teso.</li></ul></div></details>
+    </div>
   </section>
 
   <!-- DOMANDE -->
@@ -179,6 +238,8 @@ footer{color:var(--muted);font-size:.82rem}
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>Regole</button></li>
     <li><button class="tab" role="tab" id="t-spesa" data-tab="spesa" aria-controls="spesa" type="button">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.2 11H6.2Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Spesa</button></li>
+    <li><button class="tab" role="tab" id="t-consigli" data-tab="consigli" aria-controls="consigli" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.9V16h5v-.2c0-.8.4-1.5 1-1.9A6 6 0 0 0 12 3Z"/></svg>Consigli</button></li>
     <li><button class="tab" role="tab" id="t-domande" data-tab="domande" aria-controls="domande" type="button">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4Z"/><path d="M10 9.5a2 2 0 1 1 2.5 1.9c-.5.2-.5.6-.5 1.1"/></svg>Domande</button></li>
   </ul>
@@ -225,7 +286,7 @@ const SHOP=[
  ["Frutta per merende","pere, prugne, banane, mele"],
  ["Dispensa","olio EVO, spezie ed erbe in polvere"]
 ];
-const TABS=["pasti","regole","spesa","domande"];
+const TABS=["pasti","regole","consigli","spesa","domande"];
 const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const todayIdx=(new Date().getDay()+6)%7;
