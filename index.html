@@ -13,17 +13,17 @@
 /* Layout: app da telefono a schede — intestazione breve, una sezione alla volta, barra di menu fissa in basso */
 :root{
   --bg:#f5f7f2; --surface:#ffffff; --fg:#1f2a24; --muted:#5f6d64; --line:#dde3da;
-  --accent:#2f6b55; --accent-soft:#e3eee8; --new:#c4621d; --new-soft:#fbe9dc; --grain:#d9a441; --veg:#5b9a6e;
+  --accent:#2f6b55; --accent-soft:#e3eee8; --new:#c4621d; --new-soft:#fbe9dc; --grain:#d9a441; --veg:#5b9a6e; --fat:#e8d35a;
   --display:"Bricolage Grotesque", ui-rounded, system-ui, sans-serif;
   --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
   --navh:64px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#141a17; --surface:#1c2420; --fg:#e8eee9; --muted:#9aa89f; --line:#2c3630;
-  --accent:#7cc2a3; --accent-soft:#22332b; --new:#f0a26b; --new-soft:#3a2a1e; --grain:#e0b65e; --veg:#7cc2a3; color-scheme:dark}}
+  --accent:#7cc2a3; --accent-soft:#22332b; --new:#f0a26b; --new-soft:#3a2a1e; --grain:#e0b65e; --veg:#7cc2a3; --fat:#d8c95c; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#141a17; --surface:#1c2420; --fg:#e8eee9; --muted:#9aa89f; --line:#2c3630;
-  --accent:#7cc2a3; --accent-soft:#22332b; --new:#f0a26b; --new-soft:#3a2a1e; --grain:#e0b65e; --veg:#7cc2a3; color-scheme:dark}
+  --accent:#7cc2a3; --accent-soft:#22332b; --new:#f0a26b; --new-soft:#3a2a1e; --grain:#e0b65e; --veg:#7cc2a3; --fat:#d8c95c; color-scheme:dark}
 
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);}
@@ -91,7 +91,17 @@ a{color:var(--accent)}
 .reset{align-self:flex-start;background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:6px 14px;font:500 .85rem var(--body);cursor:pointer}
 
 .plate{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center}
-.plate-dish{width:120px;max-width:100%;aspect-ratio:1;border-radius:50%;background:conic-gradient(var(--grain) 0 50%,var(--new) 50% 75%,var(--veg) 75% 100%);box-shadow:0 0 0 8px var(--accent-soft)}
+.plate-dish{width:120px;max-width:100%;aspect-ratio:1;border-radius:50%;background:conic-gradient(from 270deg,var(--new) 0 25%,var(--veg) 25% 50%,var(--grain) 50% 100%);box-shadow:0 0 0 8px var(--accent-soft);display:grid;place-items:center}
+.plate-dish::after{content:"";width:36%;aspect-ratio:1;border-radius:50%;background:var(--fat);box-shadow:0 0 0 3px var(--surface)}
+.qwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.qty2{width:100%;border-collapse:collapse;font-size:.88rem;font-variant-numeric:tabular-nums}
+.qty2 th,.qty2 td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.qty2 tr:last-child td{border-bottom:0}
+.qty2 thead th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.qty2 tbody th{font-weight:600;min-width:96px}
+.qty2 .hl{background:var(--accent-soft)}
+.qty2 thead .hl{color:var(--accent)}
+.qty2 small{display:block;color:var(--muted);font-weight:400;font-size:.78rem}
 .legend{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;min-width:0}
 .legend li{display:grid;grid-template-columns:12px 1fr;gap:4px 10px;align-items:baseline}
 .legend i{width:12px;height:12px;border-radius:3px;display:block;transform:translateY(1px)}
@@ -162,28 +172,27 @@ footer{color:var(--muted);font-size:.82rem}
     </ul>
     <div class="eyebrow">Mai</div>
     <div class="never"><span>sale</span><span>zucchero</span><span>miele</span><span>latte vaccino da bere</span><span>uova, carne o pesce crudi</span><span>fritti</span><span>alcol</span><span>formaggi a latte crudo o con muffa</span></div>
-    <div class="panel-head" style="margin-top:8px"><h2>Come comporre il piatto</h2><p class="sub">Il piatto dei piccoli è diverso da quello degli adulti: più carboidrati, poche proteine.</p></div>
+    <div class="panel-head" style="margin-top:8px"><h2>Come comporre il piatto</h2><p class="sub">Lo schema del piano: il piatto dei piccoli ha più carboidrati e meno verdura di quello degli adulti.</p></div>
     <div class="plate">
-      <div class="plate-dish" role="img" aria-label="Piatto diviso: metà carboidrati, un quarto proteine, un quarto verdura"></div>
+      <div class="plate-dish" role="img" aria-label="Piatto dei bimbi: metà cereali e patate, un quarto proteine, un quarto frutta e verdura, grassi al centro"></div>
       <ul class="legend">
-        <li><i style="background:var(--grain)"></i><b>½ carboidrati</b><span>pastina, cous cous, miglio, quinoa, patate</span></li>
-        <li><i style="background:var(--new)"></i><b>¼ proteine</b><span>carne, pesce, uovo, legumi, formaggio</span></li>
-        <li><i style="background:var(--veg)"></i><b>¼ verdura o frutta</b><span>la crema di base</span></li>
+        <li><i style="background:var(--grain)"></i><b>½ cereali e patate</b><span>pastina, cous cous, miglio, quinoa, patate</span></li>
+        <li><i style="background:var(--new)"></i><b>¼ alimenti proteici</b><span>carne, pesce, uovo, legumi, formaggi</span></li>
+        <li><i style="background:var(--veg)"></i><b>¼ frutta e verdura</b><span>la crema di base</span></li>
+        <li><i style="background:var(--fat)"></i><b>Grassi buoni al centro</b><span>olio EVO a ogni pasto, avocado, burro di qualità</span></li>
       </ul>
     </div>
+    <p class="sub">Negli adulti è il contrario: metà piatto di verdura e frutta, un quarto proteine, un quarto carboidrati.</p>
     <ul class="rules">
-      <li><b>Più grassi buoni</b><span>Olio EVO a ogni pasto. Servono allo sviluppo del cervello e alla crescita.</span></li>
       <li><b>Proteine senza esagerare</b><span>Troppe affaticano i reni e fanno crescere di peso troppo in fretta. Meglio variare le fonti nella settimana.</span></li>
       <li><b>Fibre con calma</b><span>Troppa verdura sazia senza dare energia e ostacola l'assorbimento di ferro e calcio.</span></li>
     </ul>
-    <div class="eyebrow">Quantità indicate nel piano</div>
-    <table class="qty">
-      <tr><td>Ricotta e formaggi freschi</td><td>circa 2 cucchiai</td></tr>
-      <tr><td>Parmigiano e stagionati</td><td>circa 2 cucchiaini, grattugiati</td></tr>
-      <tr><td>Olio EVO</td><td>un filo a ogni pasto</td></tr>
-      <tr><td>Altri alimenti</td><td>grammature da chiedere alla nutrizionista</td></tr>
-    </table>
-    <p class="sub">Le quantità sono un riferimento, non un obiettivo. Conta che il piatto sia proporzionato, non che lo finisca.</p>
+    <div class="panel-head" style="margin-top:8px"><h2>Porzioni per pasto</h2><p class="sub">Dalle tabelle del piano. In evidenza la colonna degli 8 mesi, la più vicina a questa fase.</p></div>
+    <div class="qwrap"><table class="qty2">
+      <thead><tr><th scope="col">Alimento</th><th scope="col">6 mesi</th><th scope="col" class="hl">8 mesi</th><th scope="col">12 mesi</th></tr></thead>
+      <tbody><tr><th>Cereali<small>pasta, riso, miglio, cous cous, orzo, farro</small></th><td>20–25 g</td><td class="hl">20–25 g</td><td>20–25 g</td></tr><tr><th>Patate</th><td>40 g</td><td class="hl">60 g</td><td>70 g</td></tr><tr><th>Carne<small>fresca</small></th><td>10 g</td><td class="hl">20 g</td><td>25 g</td></tr><tr><th>Carne<small>omogeneizzata</small></th><td>½ vasetto</td><td class="hl">1 vasetto</td><td>1 vasetto</td></tr><tr><th>Pesce<small>fresco, magro o grasso</small></th><td>10–15 g</td><td class="hl">20 g</td><td>30 g</td></tr><tr><th>Pesce<small>omogeneizzato</small></th><td>½ vasetto</td><td class="hl">1 vasetto</td><td>1 vasetto</td></tr><tr><th>Legumi<small>secchi oppure cotti</small></th><td>20 g / 60 g</td><td class="hl">20 g / 60 g</td><td>20 g / 60 g</td></tr><tr><th>Uovo</th><td>½ uovo</td><td class="hl">½ uovo</td><td>1 uovo</td></tr><tr><th>Formaggi</th><td>10 g</td><td class="hl">20 g</td><td>25 g</td></tr><tr><th>Yogurt bianco intero</th><td>½ vasetto</td><td class="hl">½ vasetto</td><td>½ vasetto</td></tr><tr><th>Verdura</th><td>1–2 cucchiaini</td><td class="hl">3–4 cucchiai</td><td>80–100 g</td></tr><tr><th>Frutta<small>fresca</small></th><td>20–30 g</td><td class="hl">30 g</td><td>30 g</td></tr></tbody>
+    </table></div>
+    <p class="sub">Sono un riferimento, non un obiettivo: nei giorni con meno fame non va forzato. Conta più che il piatto sia proporzionato che finito.</p>
     <div class="panel-head" style="margin-top:8px"><h2>Preparare in anticipo</h2></div>
     <ul class="rules">
       <li><b>Domenica, 60–90 minuti</b><span>Brodo vegetale, verdure a vapore, legumi pronti. Col Bimby: verdura a pezzi e acqua nel boccale, poi frulla; proteine nel Varoma.</span></li>
@@ -334,7 +343,7 @@ document.getElementById("shop").addEventListener("change",e=>{
 document.getElementById("reset").addEventListener("click",()=>{checked=[];store.set("shop",checked);renderShop();});
 
 /* Domande salvate sul telefono */
-const DEFAULT_QS=["Lunedì: cous cous e uovo insieme vanno bene se il grano è nuovo?","Le grammature: dove sono indicate?","Le merende vanno già proposte questa settimana?","Serve un integratore di ferro o vitamina D?"];
+const DEFAULT_QS=["Lunedì: cous cous e uovo insieme vanno bene se il grano è nuovo?","Le merende vanno già proposte questa settimana?","Serve un integratore di ferro o vitamina D?"];
 const qOpen=document.getElementById("qsOpen"),qDone=document.getElementById("qsDone"),doneWrap=document.getElementById("doneWrap");
 const askForm=document.getElementById("askForm"),askInput=document.getElementById("askInput"),askStatus=document.getElementById("askStatus");
 let qs=store.get("domande");
