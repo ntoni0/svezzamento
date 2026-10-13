@@ -120,6 +120,22 @@ a{color:var(--accent)}
 .tip .tb p{margin:0}.tip .tb ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
 .tip .tb strong{color:var(--fg);font-weight:600}
 .warn{border-left:3px solid var(--new);padding-left:10px}
+.additem{display:grid;grid-template-columns:1fr auto;gap:8px}
+.additem input,.additem select{font:16px var(--body);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.additem input{grid-column:1/-1}
+.additem button{appearance:none;border:0;background:var(--accent);color:var(--bg);font:600 .95rem var(--body);padding:10px 18px;border-radius:999px;cursor:pointer}
+.shopgroups{display:flex;flex-direction:column;gap:14px}
+.shopgroup h3{font-family:var(--body);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin:0 0 6px}
+.shopgroup ul{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.shopgroup li{display:flex;align-items:center;border-bottom:1px solid var(--line)}
+.shopgroup li:last-child{border-bottom:0}
+.shopgroup label{flex:1;min-width:0;display:flex;gap:12px;padding:11px 14px;align-items:center;cursor:pointer;overflow-wrap:anywhere}
+.shopgroup input{width:20px;height:20px;accent-color:var(--accent);flex:none}
+.shopgroup input:checked + span{opacity:.45;text-decoration:line-through}
+.shopgroup .del{appearance:none;border:0;background:none;color:var(--muted);font-size:1.25rem;line-height:1;padding:10px 14px;cursor:pointer}
+.shopgroup .del:hover{color:var(--new)}
+.shopactions{display:flex;flex-wrap:wrap;gap:8px}
+.reset.confirm{border-color:var(--new);color:var(--new)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .ask{display:flex;flex-direction:column;gap:8px}
 .ask textarea{width:100%;font:16px/1.4 var(--body);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;resize:vertical}
@@ -202,9 +218,20 @@ footer{color:var(--muted);font-size:.82rem}
 
   <!-- SPESA -->
   <section class="panel" id="spesa" role="tabpanel" aria-labelledby="t-spesa" hidden>
-    <div class="panel-head"><h2>Lista della spesa</h2><p class="sub">Le spunte restano salvate su questo telefono.</p></div>
-    <ul class="shop" id="shop"></ul>
-    <button class="reset" id="reset" type="button">Azzera la lista</button>
+    <div class="panel-head"><h2>Lista della spesa</h2><p class="sub">Salvata su questo telefono. Tocca per spuntare, × per eliminare.</p></div>
+    <form class="additem" id="shopForm" autocomplete="off">
+      <label for="shopInput" class="sr">Cosa aggiungere</label>
+      <input id="shopInput" type="text" maxlength="80" placeholder="Aggiungi alla lista…">
+      <label for="shopCat" class="sr">Reparto</label>
+      <select id="shopCat"></select>
+      <button type="submit">Aggiungi</button>
+    </form>
+    <p class="status" id="shopStatus" role="status"></p>
+    <div id="shop" class="shopgroups"></div>
+    <div class="shopactions">
+      <button class="reset" id="clearDone" type="button">Togli quelli presi</button>
+      <button class="reset" id="reset" type="button">Ripristina lista della settimana</button>
+    </div>
   </section>
 
   <!-- CONSIGLI -->
@@ -286,15 +313,16 @@ const DAYS=[
   pAlt:{r:"r70253",t:"Pappa con carote, patate e carne",n:"Usa il pollo, togli il parmigiano, aggiungi il cous cous."},
   c:{base:"Crema di cavolfiore",cer:"Sabbiolina",prot:"Salmone"}}
 ];
-const SHOP=[
- ["Verdure","zucca, patate, patate dolci, carote, zucchine, cavolfiore, broccoli, cavolo romano, bieta, spinaci (anche surgelati 100% verdura)"],
- ["Proteine","uova, petto di pollo, fesa di tacchino, filetti di nasello, salmone senza spine"],
- ["Legumi","ceci decorticati, lenticchie rosse decorticate"],
- ["Latticini","ricotta da latte pastorizzato"],
- ["Cereali","cous cous, quinoa, miglio, sabbiolina"],
- ["Frutta per merende","pere, prugne, banane, mele"],
- ["Dispensa","olio EVO, spezie ed erbe in polvere"]
-];
+const SHOP_CATS=["Verdure","Proteine","Legumi","Latticini","Cereali","Frutta","Dispensa","Altro"];
+const SHOP_DEFAULT={
+ Verdure:["zucca","patate","patate dolci","carote","zucchine","cavolfiore","broccoli","cavolo romano","bieta","spinaci (anche surgelati 100% verdura)"],
+ Proteine:["uova","petto di pollo","fesa di tacchino","filetti di nasello","salmone senza spine"],
+ Legumi:["ceci decorticati","lenticchie rosse decorticate"],
+ Latticini:["ricotta da latte pastorizzato"],
+ Cereali:["cous cous","quinoa","miglio","sabbiolina"],
+ Frutta:["pere","prugne","banane","mele"],
+ Dispensa:["olio EVO","spezie ed erbe in polvere"]
+};
 const TABS=["pasti","regole","consigli","spesa","domande"];
 const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -332,15 +360,41 @@ document.getElementById("days").addEventListener("click",e=>{
   const b=e.target.closest(".day");if(!b)return;sel=+b.dataset.i;store.set("day",sel);renderDays();renderMeals();
 });
 
-let checked=store.get("shop");if(!Array.isArray(checked))checked=[];
+const defaultShop=()=>{let n=0;return Object.entries(SHOP_DEFAULT).flatMap(([cat,items])=>items.map(text=>({id:"d"+(n++),cat,text,done:false})))};
+let shop=store.get("spesa");if(!Array.isArray(shop))shop=defaultShop();
+const shopEl=document.getElementById("shop"),shopStatus=document.getElementById("shopStatus");
+document.getElementById("shopCat").innerHTML=SHOP_CATS.map(c=>`<option>${c}</option>`).join("");
+function saveShop(){store.set("spesa",shop)}
 function renderShop(){
-  document.getElementById("shop").innerHTML=SHOP.map((s,i)=>
-   `<li><label for="s${i}"><input type="checkbox" id="s${i}" data-i="${i}" ${checked.includes(i)?'checked':''}><div><span class="cat">${s[0]}</span><span class="items">${s[1]}</span></div></label></li>`).join("");
+  const groups=SHOP_CATS.map(c=>[c,shop.filter(i=>i.cat===c)]).filter(g=>g[1].length);
+  shopEl.innerHTML=groups.length?groups.map(([c,items])=>`<div class="shopgroup"><h3>${c}</h3><ul>${items.map(i=>
+    `<li data-id="${esc(i.id)}"><label><input type="checkbox" ${i.done?"checked":""} aria-label="Preso: ${esc(i.text)}"><span>${esc(i.text)}</span></label><button class="del" type="button" aria-label="Elimina ${esc(i.text)}">×</button></li>`).join("")}</ul></div>`).join("")
+   :`<p class="empty">La lista è vuota. Aggiungi qualcosa qui sopra.</p>`;
 }
-document.getElementById("shop").addEventListener("change",e=>{
-  const i=+e.target.dataset.i;checked=e.target.checked?[...new Set([...checked,i])]:checked.filter(x=>x!==i);store.set("shop",checked);
+shopEl.addEventListener("change",e=>{
+  const li=e.target.closest("li[data-id]");if(!li)return;
+  shop=shop.map(i=>i.id===li.dataset.id?{...i,done:e.target.checked}:i);saveShop();
 });
-document.getElementById("reset").addEventListener("click",()=>{checked=[];store.set("shop",checked);renderShop();});
+shopEl.addEventListener("click",e=>{
+  const b=e.target.closest(".del");if(!b)return;const li=b.closest("li[data-id]");
+  shop=shop.filter(i=>i.id!==li.dataset.id);saveShop();renderShop();
+});
+document.getElementById("shopForm").addEventListener("submit",e=>{
+  e.preventDefault();const inp=document.getElementById("shopInput");const text=inp.value.trim();if(!text)return;
+  const cat=document.getElementById("shopCat").value||"Altro";
+  shop.push({id:"u"+Date.now(),cat,text,done:false});saveShop();renderShop();inp.value="";shopStatus.textContent=`Aggiunto in ${cat}.`;
+});
+document.getElementById("clearDone").addEventListener("click",()=>{
+  const n=shop.filter(i=>i.done).length;shop=shop.filter(i=>!i.done);saveShop();renderShop();
+  shopStatus.textContent=n?`Tolti ${n} articoli presi.`:"Nessun articolo spuntato.";
+});
+const resetBtn=document.getElementById("reset");let resetArmed=null;
+resetBtn.addEventListener("click",()=>{
+  if(!resetArmed){resetBtn.textContent="Tocca di nuovo per confermare";resetBtn.classList.add("confirm");
+    resetArmed=setTimeout(()=>{resetArmed=null;resetBtn.textContent="Ripristina lista della settimana";resetBtn.classList.remove("confirm")},4000);return}
+  clearTimeout(resetArmed);resetArmed=null;resetBtn.textContent="Ripristina lista della settimana";resetBtn.classList.remove("confirm");
+  shop=defaultShop();saveShop();renderShop();shopStatus.textContent="Lista della settimana ripristinata.";
+});
 
 /* Domande salvate sul telefono */
 const DEFAULT_QS=["Lunedì: cous cous e uovo insieme vanno bene se il grano è nuovo?","Le merende vanno già proposte questa settimana?","Serve un integratore di ferro o vitamina D?"];
